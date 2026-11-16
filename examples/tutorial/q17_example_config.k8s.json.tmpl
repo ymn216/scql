@@ -1,0 +1,65 @@
+{
+    "sql": "SELECT COUNT(extendedprice) AS cnt_res FROM (SELECT p.partkey * 0 AS mask, l.extendedprice FROM part AS p JOIN (SELECT l2.partkey, AVG(l2.quantity) AS threshold FROM lineitem AS l2 GROUP BY l2.partkey) AS aq ON p.partkey = aq.partkey JOIN lineitem AS l ON l.partkey = p.partkey WHERE p.brand = 2 AND l.quantity < aq.threshold) AS t GROUP BY mask;",
+    "catalog": {
+        "tables": [
+            {
+                "table_name": "lineitem",
+                "columns": [
+                    { "name": "partkey",          "type": "int", "ordinal_position": 1 },
+                    { "name": "quantity", "type": "int",    "ordinal_position": 2 },
+                    { "name": "extendedprice",      "type": "int",    "ordinal_position": 3 }
+                ],
+                "ref_table": "alice.lineitem",
+                "db_type": "mysql",
+                "owner": { "code": "alice" }
+            },
+            {
+                "table_name": "part",
+                "columns": [
+                    { "name": "partkey",           "type": "int", "ordinal_position": 1 },
+                    { "name": "brand", "type": "int",  "ordinal_position": 2 }
+                ],
+                "ref_table": "bob.part",
+                "db_type": "mysql",
+                "owner": { "code": "bob" }
+            }
+        ]
+    },
+    "security_conf": {
+        "global_relaxation": {
+            "reveal_group_count": true,
+            "reveal_group_mark": true,
+            "reveal_key_after_join": true,
+            "reveal_filter_mask": true
+        },
+        "column_visibility_list": [
+            { "table": "lineitem", "column": "partkey",           "visible_parties": [ { "code": "bob" } ] },
+            { "table": "lineitem", "column": "quantity",  "visible_parties": [ { "code": "bob" } ] },
+            { "table": "lineitem", "column": "extendedprice",       "visible_parties": [ { "code": "bob" } ] },
+            { "table": "part", "column": "partkey",          "visible_parties": [ { "code": "alice" } ] },
+            { "table": "part", "column": "brand", "visible_parties": [ { "code": "alice" } ] }
+        ],
+        "reverse_inference_conf": {
+            "enable_reverse_inference": true
+        }
+    },
+    "engine_endpoints": {
+        "alice": "__ALICE_IP__:8003",
+        "bob":   "__BOB_IP__:8003"
+    },
+    "engine_link_endpoints": {
+        "alice": "__ALICE_IP__:8004",
+        "bob":   "__BOB_IP__:8004"
+    },
+    "engine_client_type": "GRPC",
+    "engine_timeout": 300,
+    "issuer": "alice",
+    "compile_opts": {
+        "spu_conf": {
+            "protocol": "SEMI2K",
+            "field": "FM64",
+            "experimental_enable_colocated_optimization": true
+        },
+        "batched": false
+    }
+}

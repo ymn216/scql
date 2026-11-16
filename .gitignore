@@ -38,3 +38,6 @@ tool-bin/*
 # python binding build
 python/build/
 python/package/
+
+# K8s tutorial: local last-pushed opencore-demo fingerprint (run-k8s-tutorial.ps1)
+.opencore-demo.k8s.pushstate

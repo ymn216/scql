@@ -84,28 +84,39 @@ func main() {
 
 func execute(config *Config, graphvizFile string) error {
 	ctx := context.Background()
+	runStart := time.Now()
 
 	// Step 1: Compile SQL to execution plan
 	logrus.Info("Step 1: Compiling SQL to execution plan...")
-
+	compileStart := time.Now()
 	compiledPlan, err := compileSQL(ctx, config, graphvizFile)
 	if err != nil {
 		return fmt.Errorf("compilation failed: %w", err)
 	}
+	compileSecs := time.Since(compileStart).Seconds()
 
 	logrus.Infof("Compilation successful. SubGraphs: %d", len(compiledPlan.SubGraphs))
 
-	// Step 2: Execute the plan on engine
+	// Step 2: Execute the plan on engine (gRPC from this process to engine endpoints;
+	// wall time is roughly max across parties plus network)
 	logrus.Info("Step 2: Executing plan on engine...")
-
+	execStart := time.Now()
 	result, err := executePlan(ctx, config, compiledPlan)
 	if err != nil {
 		return fmt.Errorf("execution failed: %w", err)
 	}
+	execSecs := time.Since(execStart).Seconds()
 
 	// Step 3: Display results
 	logrus.Info("Step 3: Query results:")
 	displayResults(result)
+
+	totalSecs := time.Since(runStart).Seconds()
+	fmt.Fprintf(os.Stdout,
+		"\n[timing] compiler_wall=%.3fs engine_rpc_wall=%.3fs opencore_demo_total=%.3fs\n"+
+			"Note: host \"kubectl exec\" Stopwatch includes SSH/stream overhead on top of opencore_demo_total.\n"+
+			"Note: engine-side CPU may appear in pod logs as running_cost(...ms) per session.\n",
+		compileSecs, execSecs, totalSecs)
 
 	return nil
 }

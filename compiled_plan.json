@@ -1,0 +1,2333 @@
+{
+  "schema":  {
+    "columns":  [
+      {
+        "name":  "c_count"
+      },
+      {
+        "name":  "custdist"
+      }
+    ]
+  },
+  "warning":  {},
+  "spuRuntimeConf":  {
+    "protocol":  "SEMI2K",
+    "field":  "FM64",
+    "experimentalEnableColocatedOptimization":  true
+  },
+  "parties":  [
+    {
+      "code":  "alice"
+    },
+    {
+      "code":  "bob"
+    }
+  ],
+  "subGraphs":  {
+    "alice":  {
+      "nodes":  {
+        "0":  {
+          "nodeName":  "run_sql.0",
+          "opType":  "RunSQL",
+          "outputs":  {
+            "Out":  {
+              "tensors":  [
+                {
+                  "name":  "customer.custkey.1",
+                  "elemType":  "INT64",
+                  "option":  "REFERENCE",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_PRIVATE"
+                  },
+                  "refNum":  1
+                }
+              ]
+            }
+          },
+          "attributes":  {
+            "sql":  {
+              "t":  {
+                "name":  ".0",
+                "elemType":  "STRING",
+                "stringData":  [
+                  "select c.custkey from alice.customer as c;"
+                ]
+              }
+            },
+            "table_refs":  {
+              "t":  {
+                "name":  ".0",
+                "shape":  {
+                  "dim":  [
+                    {
+                      "dimValue":  "1"
+                    }
+                  ]
+                },
+                "elemType":  "STRING",
+                "stringData":  [
+                  "alice.customer"
+                ]
+              }
+            }
+          }
+        },
+        "10":  {
+          "nodeName":  "make_public.10",
+          "opType":  "MakePublic",
+          "inputs":  {
+            "In":  {
+              "tensors":  [
+                {
+                  "name":  "group_mark.21",
+                  "elemType":  "BOOL",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_SECRET"
+                  },
+                  "refNum":  1
+                }
+              ]
+            }
+          },
+          "outputs":  {
+            "Out":  {
+              "tensors":  [
+                {
+                  "name":  "group_mark.22",
+                  "elemType":  "BOOL",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_PUBLIC"
+                  },
+                  "refNum":  1
+                }
+              ]
+            }
+          }
+        },
+        "11":  {
+          "nodeName":  "filter.11",
+          "opType":  "Filter",
+          "inputs":  {
+            "Filter":  {
+              "tensors":  [
+                {
+                  "name":  "group_mark.22",
+                  "elemType":  "BOOL",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_PUBLIC"
+                  },
+                  "refNum":  1
+                }
+              ]
+            },
+            "In":  {
+              "tensors":  [
+                {
+                  "name":  "aggregated_group_simple_count.20",
+                  "elemType":  "INT64",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_SECRET"
+                  },
+                  "refNum":  1
+                }
+              ]
+            }
+          },
+          "outputs":  {
+            "Out":  {
+              "tensors":  [
+                {
+                  "name":  "simple_count_result.11",
+                  "elemType":  "INT64",
+                  "option":  "REFERENCE",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_SECRET"
+                  },
+                  "refNum":  3
+                }
+              ]
+            }
+          }
+        },
+        "12":  {
+          "nodeName":  "sort.12",
+          "opType":  "Sort",
+          "inputs":  {
+            "In":  {
+              "tensors":  [
+                {
+                  "name":  "simple_count_result.11",
+                  "elemType":  "INT64",
+                  "option":  "REFERENCE",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_SECRET"
+                  },
+                  "refNum":  3
+                },
+                {
+                  "name":  "simple_count_result.11",
+                  "elemType":  "INT64",
+                  "option":  "REFERENCE",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_SECRET"
+                  },
+                  "refNum":  3
+                }
+              ]
+            },
+            "Key":  {
+              "tensors":  [
+                {
+                  "name":  "simple_count_result.11",
+                  "elemType":  "INT64",
+                  "option":  "REFERENCE",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_SECRET"
+                  },
+                  "refNum":  3
+                }
+              ]
+            }
+          },
+          "outputs":  {
+            "Out":  {
+              "tensors":  [
+                {
+                  "name":  "simple_count_result.23",
+                  "elemType":  "INT64",
+                  "option":  "REFERENCE",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_SECRET"
+                  },
+                  "refNum":  1
+                },
+                {
+                  "name":  "simple_count_result.24",
+                  "elemType":  "INT64",
+                  "option":  "REFERENCE",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_SECRET"
+                  },
+                  "refNum":  1
+                }
+              ]
+            }
+          },
+          "attributes":  {
+            "reverse":  {
+              "t":  {
+                "name":  ".0",
+                "shape":  {
+                  "dim":  [
+                    {
+                      "dimValue":  "1"
+                    }
+                  ]
+                },
+                "elemType":  "BOOL",
+                "boolData":  [
+                  false
+                ]
+              }
+            }
+          }
+        },
+        "13":  {
+          "nodeName":  "oblivious_group_mark.13",
+          "opType":  "ObliviousGroupMark",
+          "inputs":  {
+            "Key":  {
+              "tensors":  [
+                {
+                  "name":  "simple_count_result.23",
+                  "elemType":  "INT64",
+                  "option":  "REFERENCE",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_SECRET"
+                  },
+                  "refNum":  1
+                }
+              ]
+            }
+          },
+          "outputs":  {
+            "Group":  {
+              "tensors":  [
+                {
+                  "name":  "group_mark.25",
+                  "elemType":  "BOOL",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_SECRET"
+                  },
+                  "refNum":  3
+                }
+              ]
+            }
+          }
+        },
+        "14":  {
+          "nodeName":  "count.14",
+          "opType":  "ObliviousGroupCount",
+          "inputs":  {
+            "Group":  {
+              "tensors":  [
+                {
+                  "name":  "group_mark.25",
+                  "elemType":  "BOOL",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_SECRET"
+                  },
+                  "refNum":  3
+                }
+              ]
+            },
+            "In":  {
+              "tensors":  [
+                {
+                  "name":  "group_mark.25",
+                  "elemType":  "BOOL",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_SECRET"
+                  },
+                  "refNum":  3
+                }
+              ]
+            }
+          },
+          "outputs":  {
+            "Out":  {
+              "tensors":  [
+                {
+                  "name":  "aggregated_group_simple_count.26",
+                  "elemType":  "INT64",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_SECRET"
+                  },
+                  "refNum":  1
+                }
+              ]
+            }
+          }
+        },
+        "15":  {
+          "nodeName":  "shuffle.15",
+          "opType":  "Shuffle",
+          "inputs":  {
+            "In":  {
+              "tensors":  [
+                {
+                  "name":  "aggregated_group_simple_count.26",
+                  "elemType":  "INT64",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_SECRET"
+                  },
+                  "refNum":  1
+                },
+                {
+                  "name":  "simple_count_result.24",
+                  "elemType":  "INT64",
+                  "option":  "REFERENCE",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_SECRET"
+                  },
+                  "refNum":  1
+                },
+                {
+                  "name":  "group_mark.25",
+                  "elemType":  "BOOL",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_SECRET"
+                  },
+                  "refNum":  3
+                }
+              ]
+            }
+          },
+          "outputs":  {
+            "Out":  {
+              "tensors":  [
+                {
+                  "name":  "aggregated_group_simple_count.27",
+                  "elemType":  "INT64",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_SECRET"
+                  },
+                  "refNum":  1
+                },
+                {
+                  "name":  "simple_count_result.28",
+                  "elemType":  "INT64",
+                  "option":  "REFERENCE",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_SECRET"
+                  },
+                  "refNum":  1
+                },
+                {
+                  "name":  "group_mark.29",
+                  "elemType":  "BOOL",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_SECRET"
+                  },
+                  "refNum":  1
+                }
+              ]
+            }
+          }
+        },
+        "16":  {
+          "nodeName":  "make_public.16",
+          "opType":  "MakePublic",
+          "inputs":  {
+            "In":  {
+              "tensors":  [
+                {
+                  "name":  "group_mark.29",
+                  "elemType":  "BOOL",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_SECRET"
+                  },
+                  "refNum":  1
+                }
+              ]
+            }
+          },
+          "outputs":  {
+            "Out":  {
+              "tensors":  [
+                {
+                  "name":  "group_mark.30",
+                  "elemType":  "BOOL",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_PUBLIC"
+                  },
+                  "refNum":  1
+                }
+              ]
+            }
+          }
+        },
+        "17":  {
+          "nodeName":  "filter.17",
+          "opType":  "Filter",
+          "inputs":  {
+            "Filter":  {
+              "tensors":  [
+                {
+                  "name":  "group_mark.30",
+                  "elemType":  "BOOL",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_PUBLIC"
+                  },
+                  "refNum":  1
+                }
+              ]
+            },
+            "In":  {
+              "tensors":  [
+                {
+                  "name":  "aggregated_group_simple_count.27",
+                  "elemType":  "INT64",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_SECRET"
+                  },
+                  "refNum":  1
+                },
+                {
+                  "name":  "simple_count_result.28",
+                  "elemType":  "INT64",
+                  "option":  "REFERENCE",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_SECRET"
+                  },
+                  "refNum":  1
+                }
+              ]
+            }
+          },
+          "outputs":  {
+            "Out":  {
+              "tensors":  [
+                {
+                  "name":  "simple_count_result.12",
+                  "elemType":  "INT64",
+                  "option":  "REFERENCE",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_SECRET"
+                  },
+                  "refNum":  1
+                },
+                {
+                  "name":  "simple_count_result_firstrow.13",
+                  "elemType":  "INT64",
+                  "option":  "REFERENCE",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_SECRET"
+                  },
+                  "refNum":  1
+                }
+              ]
+            }
+          }
+        },
+        "18":  {
+          "nodeName":  "make_private.18",
+          "opType":  "MakePrivate",
+          "inputs":  {
+            "In":  {
+              "tensors":  [
+                {
+                  "name":  "simple_count_result_firstrow.13",
+                  "elemType":  "INT64",
+                  "option":  "REFERENCE",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_SECRET"
+                  },
+                  "refNum":  1
+                }
+              ]
+            }
+          },
+          "outputs":  {
+            "Out":  {
+              "tensors":  [
+                {
+                  "name":  "simple_count_result_firstrow.31",
+                  "elemType":  "INT64",
+                  "option":  "REFERENCE",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_PRIVATE"
+                  },
+                  "refNum":  1
+                }
+              ]
+            }
+          },
+          "attributes":  {
+            "reveal_to":  {
+              "t":  {
+                "name":  ".0",
+                "elemType":  "STRING",
+                "stringData":  [
+                  "alice"
+                ]
+              }
+            }
+          }
+        },
+        "19":  {
+          "nodeName":  "make_private.19",
+          "opType":  "MakePrivate",
+          "inputs":  {
+            "In":  {
+              "tensors":  [
+                {
+                  "name":  "simple_count_result.12",
+                  "elemType":  "INT64",
+                  "option":  "REFERENCE",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_SECRET"
+                  },
+                  "refNum":  1
+                }
+              ]
+            }
+          },
+          "outputs":  {
+            "Out":  {
+              "tensors":  [
+                {
+                  "name":  "simple_count_result.32",
+                  "elemType":  "INT64",
+                  "option":  "REFERENCE",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_PRIVATE"
+                  },
+                  "refNum":  1
+                }
+              ]
+            }
+          },
+          "attributes":  {
+            "reveal_to":  {
+              "t":  {
+                "name":  ".0",
+                "elemType":  "STRING",
+                "stringData":  [
+                  "alice"
+                ]
+              }
+            }
+          }
+        },
+        "2":  {
+          "nodeName":  "make_share.2",
+          "opType":  "MakeShare",
+          "inputs":  {
+            "In":  {
+              "tensors":  [
+                {
+                  "name":  "customer.custkey.1",
+                  "elemType":  "INT64",
+                  "option":  "REFERENCE",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_PRIVATE"
+                  },
+                  "refNum":  1
+                }
+              ]
+            }
+          },
+          "outputs":  {
+            "Out":  {
+              "tensors":  [
+                {
+                  "name":  "customer.custkey.14",
+                  "elemType":  "INT64",
+                  "option":  "REFERENCE",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_SECRET"
+                  },
+                  "refNum":  2
+                }
+              ]
+            }
+          }
+        },
+        "20":  {
+          "nodeName":  "publish_result.20",
+          "opType":  "Publish",
+          "inputs":  {
+            "In":  {
+              "tensors":  [
+                {
+                  "name":  "simple_count_result_firstrow.31",
+                  "elemType":  "INT64",
+                  "option":  "REFERENCE",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_PRIVATE"
+                  },
+                  "refNum":  1
+                },
+                {
+                  "name":  "simple_count_result.32",
+                  "elemType":  "INT64",
+                  "option":  "REFERENCE",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_PRIVATE"
+                  },
+                  "refNum":  1
+                }
+              ]
+            }
+          },
+          "outputs":  {
+            "Out":  {
+              "tensors":  [
+                {
+                  "name":  "c_count.33",
+                  "elemType":  "STRING",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_PRIVATE"
+                  },
+                  "stringData":  [
+                    "c_count"
+                  ]
+                },
+                {
+                  "name":  "custdist.34",
+                  "elemType":  "STRING",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_PRIVATE"
+                  },
+                  "stringData":  [
+                    "custdist"
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        "3":  {
+          "nodeName":  "make_share.3",
+          "opType":  "MakeShare",
+          "inputs":  {
+            "In":  {
+              "tensors":  [
+                {
+                  "name":  "orders.custkey.7",
+                  "elemType":  "INT64",
+                  "option":  "REFERENCE",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_PRIVATE"
+                  },
+                  "refNum":  1
+                }
+              ]
+            }
+          },
+          "outputs":  {
+            "Out":  {
+              "tensors":  [
+                {
+                  "name":  "orders.custkey.15",
+                  "elemType":  "INT64",
+                  "option":  "REFERENCE",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_SECRET"
+                  },
+                  "refNum":  1
+                }
+              ]
+            }
+          }
+        },
+        "4":  {
+          "nodeName":  "make_share.4",
+          "opType":  "MakeShare",
+          "inputs":  {
+            "In":  {
+              "tensors":  [
+                {
+                  "name":  "orders.orderkey.8",
+                  "elemType":  "INT64",
+                  "option":  "REFERENCE",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_PRIVATE"
+                  },
+                  "refNum":  1
+                }
+              ]
+            }
+          },
+          "outputs":  {
+            "Out":  {
+              "tensors":  [
+                {
+                  "name":  "orders.orderkey.16",
+                  "elemType":  "INT64",
+                  "option":  "REFERENCE",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_SECRET"
+                  },
+                  "refNum":  1
+                }
+              ]
+            }
+          }
+        },
+        "5":  {
+          "nodeName":  "secret_eq_join.5",
+          "opType":  "SecretJoin",
+          "inputs":  {
+            "Left":  {
+              "tensors":  [
+                {
+                  "name":  "customer.custkey.14",
+                  "elemType":  "INT64",
+                  "option":  "REFERENCE",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_SECRET"
+                  },
+                  "refNum":  2
+                }
+              ]
+            },
+            "LeftKey":  {
+              "tensors":  [
+                {
+                  "name":  "customer.custkey.14",
+                  "elemType":  "INT64",
+                  "option":  "REFERENCE",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_SECRET"
+                  },
+                  "refNum":  2
+                }
+              ]
+            },
+            "Right":  {
+              "tensors":  [
+                {
+                  "name":  "orders.orderkey.16",
+                  "elemType":  "INT64",
+                  "option":  "REFERENCE",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_SECRET"
+                  },
+                  "refNum":  1
+                }
+              ]
+            },
+            "RightKey":  {
+              "tensors":  [
+                {
+                  "name":  "orders.custkey.15",
+                  "elemType":  "INT64",
+                  "option":  "REFERENCE",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_SECRET"
+                  },
+                  "refNum":  1
+                }
+              ]
+            }
+          },
+          "outputs":  {
+            "LeftOutput":  {
+              "tensors":  [
+                {
+                  "name":  "customer.custkey.9",
+                  "elemType":  "INT64",
+                  "option":  "REFERENCE",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_SECRET"
+                  },
+                  "refNum":  2
+                }
+              ]
+            },
+            "RightOutput":  {
+              "tensors":  [
+                {
+                  "name":  "orders.orderkey.10",
+                  "elemType":  "INT64",
+                  "option":  "REFERENCE",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_SECRET"
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "6":  {
+          "nodeName":  "sort.6",
+          "opType":  "Sort",
+          "inputs":  {
+            "In":  {
+              "tensors":  [
+                {
+                  "name":  "customer.custkey.9",
+                  "elemType":  "INT64",
+                  "option":  "REFERENCE",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_SECRET"
+                  },
+                  "refNum":  2
+                }
+              ]
+            },
+            "Key":  {
+              "tensors":  [
+                {
+                  "name":  "customer.custkey.9",
+                  "elemType":  "INT64",
+                  "option":  "REFERENCE",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_SECRET"
+                  },
+                  "refNum":  2
+                }
+              ]
+            }
+          },
+          "outputs":  {
+            "Out":  {
+              "tensors":  [
+                {
+                  "name":  "customer.custkey.17",
+                  "elemType":  "INT64",
+                  "option":  "REFERENCE",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_SECRET"
+                  },
+                  "refNum":  1
+                }
+              ]
+            }
+          },
+          "attributes":  {
+            "reverse":  {
+              "t":  {
+                "name":  ".0",
+                "shape":  {
+                  "dim":  [
+                    {
+                      "dimValue":  "1"
+                    }
+                  ]
+                },
+                "elemType":  "BOOL",
+                "boolData":  [
+                  false
+                ]
+              }
+            }
+          }
+        },
+        "7":  {
+          "nodeName":  "oblivious_group_mark.7",
+          "opType":  "ObliviousGroupMark",
+          "inputs":  {
+            "Key":  {
+              "tensors":  [
+                {
+                  "name":  "customer.custkey.17",
+                  "elemType":  "INT64",
+                  "option":  "REFERENCE",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_SECRET"
+                  },
+                  "refNum":  1
+                }
+              ]
+            }
+          },
+          "outputs":  {
+            "Group":  {
+              "tensors":  [
+                {
+                  "name":  "group_mark.18",
+                  "elemType":  "BOOL",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_SECRET"
+                  },
+                  "refNum":  3
+                }
+              ]
+            }
+          }
+        },
+        "8":  {
+          "nodeName":  "count.8",
+          "opType":  "ObliviousGroupCount",
+          "inputs":  {
+            "Group":  {
+              "tensors":  [
+                {
+                  "name":  "group_mark.18",
+                  "elemType":  "BOOL",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_SECRET"
+                  },
+                  "refNum":  3
+                }
+              ]
+            },
+            "In":  {
+              "tensors":  [
+                {
+                  "name":  "group_mark.18",
+                  "elemType":  "BOOL",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_SECRET"
+                  },
+                  "refNum":  3
+                }
+              ]
+            }
+          },
+          "outputs":  {
+            "Out":  {
+              "tensors":  [
+                {
+                  "name":  "aggregated_group_simple_count.19",
+                  "elemType":  "INT64",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_SECRET"
+                  },
+                  "refNum":  1
+                }
+              ]
+            }
+          }
+        },
+        "9":  {
+          "nodeName":  "shuffle.9",
+          "opType":  "Shuffle",
+          "inputs":  {
+            "In":  {
+              "tensors":  [
+                {
+                  "name":  "aggregated_group_simple_count.19",
+                  "elemType":  "INT64",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_SECRET"
+                  },
+                  "refNum":  1
+                },
+                {
+                  "name":  "group_mark.18",
+                  "elemType":  "BOOL",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_SECRET"
+                  },
+                  "refNum":  3
+                }
+              ]
+            }
+          },
+          "outputs":  {
+            "Out":  {
+              "tensors":  [
+                {
+                  "name":  "aggregated_group_simple_count.20",
+                  "elemType":  "INT64",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_SECRET"
+                  },
+                  "refNum":  1
+                },
+                {
+                  "name":  "group_mark.21",
+                  "elemType":  "BOOL",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_SECRET"
+                  },
+                  "refNum":  1
+                }
+              ]
+            }
+          }
+        }
+      },
+      "policy":  {
+        "workerNum":  1,
+        "pipelines":  [
+          {
+            "subdags":  [
+              {
+                "jobs":  [
+                  {
+                    "nodeIds":  [
+                      "0"
+                    ]
+                  }
+                ]
+              },
+              {},
+              {
+                "jobs":  [
+                  {
+                    "nodeIds":  [
+                      "2"
+                    ]
+                  }
+                ],
+                "needCallBarrierAfterJobs":  true
+              },
+              {
+                "jobs":  [
+                  {
+                    "nodeIds":  [
+                      "3"
+                    ]
+                  }
+                ],
+                "needCallBarrierAfterJobs":  true
+              },
+              {
+                "jobs":  [
+                  {
+                    "nodeIds":  [
+                      "4"
+                    ]
+                  }
+                ],
+                "needCallBarrierAfterJobs":  true
+              },
+              {
+                "jobs":  [
+                  {
+                    "nodeIds":  [
+                      "5"
+                    ]
+                  }
+                ],
+                "needCallBarrierAfterJobs":  true
+              },
+              {
+                "jobs":  [
+                  {
+                    "nodeIds":  [
+                      "6"
+                    ]
+                  }
+                ],
+                "needCallBarrierAfterJobs":  true
+              },
+              {
+                "jobs":  [
+                  {
+                    "nodeIds":  [
+                      "7"
+                    ]
+                  }
+                ],
+                "needCallBarrierAfterJobs":  true
+              },
+              {
+                "jobs":  [
+                  {
+                    "nodeIds":  [
+                      "8"
+                    ]
+                  }
+                ],
+                "needCallBarrierAfterJobs":  true
+              },
+              {
+                "jobs":  [
+                  {
+                    "nodeIds":  [
+                      "9"
+                    ]
+                  }
+                ],
+                "needCallBarrierAfterJobs":  true
+              },
+              {
+                "jobs":  [
+                  {
+                    "nodeIds":  [
+                      "10"
+                    ]
+                  }
+                ],
+                "needCallBarrierAfterJobs":  true
+              },
+              {
+                "jobs":  [
+                  {
+                    "nodeIds":  [
+                      "11"
+                    ]
+                  }
+                ],
+                "needCallBarrierAfterJobs":  true
+              },
+              {
+                "jobs":  [
+                  {
+                    "nodeIds":  [
+                      "12"
+                    ]
+                  }
+                ],
+                "needCallBarrierAfterJobs":  true
+              },
+              {
+                "jobs":  [
+                  {
+                    "nodeIds":  [
+                      "13"
+                    ]
+                  }
+                ],
+                "needCallBarrierAfterJobs":  true
+              },
+              {
+                "jobs":  [
+                  {
+                    "nodeIds":  [
+                      "14"
+                    ]
+                  }
+                ],
+                "needCallBarrierAfterJobs":  true
+              },
+              {
+                "jobs":  [
+                  {
+                    "nodeIds":  [
+                      "15"
+                    ]
+                  }
+                ],
+                "needCallBarrierAfterJobs":  true
+              },
+              {
+                "jobs":  [
+                  {
+                    "nodeIds":  [
+                      "16"
+                    ]
+                  }
+                ],
+                "needCallBarrierAfterJobs":  true
+              },
+              {
+                "jobs":  [
+                  {
+                    "nodeIds":  [
+                      "17"
+                    ]
+                  }
+                ],
+                "needCallBarrierAfterJobs":  true
+              },
+              {
+                "jobs":  [
+                  {
+                    "nodeIds":  [
+                      "18"
+                    ]
+                  }
+                ],
+                "needCallBarrierAfterJobs":  true
+              },
+              {
+                "jobs":  [
+                  {
+                    "nodeIds":  [
+                      "19"
+                    ]
+                  }
+                ],
+                "needCallBarrierAfterJobs":  true
+              },
+              {
+                "jobs":  [
+                  {
+                    "nodeIds":  [
+                      "20"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "bob":  {
+      "nodes":  {
+        "1":  {
+          "nodeName":  "run_sql.1",
+          "opType":  "RunSQL",
+          "outputs":  {
+            "Out":  {
+              "tensors":  [
+                {
+                  "name":  "orders.custkey.7",
+                  "elemType":  "INT64",
+                  "option":  "REFERENCE",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_PRIVATE"
+                  },
+                  "refNum":  1
+                },
+                {
+                  "name":  "orders.orderkey.8",
+                  "elemType":  "INT64",
+                  "option":  "REFERENCE",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_PRIVATE"
+                  },
+                  "refNum":  1
+                }
+              ]
+            }
+          },
+          "attributes":  {
+            "sql":  {
+              "t":  {
+                "name":  ".0",
+                "elemType":  "STRING",
+                "stringData":  [
+                  "select o.custkey,o.orderkey from bob.orders as o where o.comment=3;"
+                ]
+              }
+            },
+            "table_refs":  {
+              "t":  {
+                "name":  ".0",
+                "shape":  {
+                  "dim":  [
+                    {
+                      "dimValue":  "1"
+                    }
+                  ]
+                },
+                "elemType":  "STRING",
+                "stringData":  [
+                  "bob.orders"
+                ]
+              }
+            }
+          }
+        },
+        "10":  {
+          "nodeName":  "make_public.10",
+          "opType":  "MakePublic",
+          "inputs":  {
+            "In":  {
+              "tensors":  [
+                {
+                  "name":  "group_mark.21",
+                  "elemType":  "BOOL",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_SECRET"
+                  },
+                  "refNum":  1
+                }
+              ]
+            }
+          },
+          "outputs":  {
+            "Out":  {
+              "tensors":  [
+                {
+                  "name":  "group_mark.22",
+                  "elemType":  "BOOL",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_PUBLIC"
+                  },
+                  "refNum":  1
+                }
+              ]
+            }
+          }
+        },
+        "11":  {
+          "nodeName":  "filter.11",
+          "opType":  "Filter",
+          "inputs":  {
+            "Filter":  {
+              "tensors":  [
+                {
+                  "name":  "group_mark.22",
+                  "elemType":  "BOOL",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_PUBLIC"
+                  },
+                  "refNum":  1
+                }
+              ]
+            },
+            "In":  {
+              "tensors":  [
+                {
+                  "name":  "aggregated_group_simple_count.20",
+                  "elemType":  "INT64",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_SECRET"
+                  },
+                  "refNum":  1
+                }
+              ]
+            }
+          },
+          "outputs":  {
+            "Out":  {
+              "tensors":  [
+                {
+                  "name":  "simple_count_result.11",
+                  "elemType":  "INT64",
+                  "option":  "REFERENCE",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_SECRET"
+                  },
+                  "refNum":  3
+                }
+              ]
+            }
+          }
+        },
+        "12":  {
+          "nodeName":  "sort.12",
+          "opType":  "Sort",
+          "inputs":  {
+            "In":  {
+              "tensors":  [
+                {
+                  "name":  "simple_count_result.11",
+                  "elemType":  "INT64",
+                  "option":  "REFERENCE",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_SECRET"
+                  },
+                  "refNum":  3
+                },
+                {
+                  "name":  "simple_count_result.11",
+                  "elemType":  "INT64",
+                  "option":  "REFERENCE",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_SECRET"
+                  },
+                  "refNum":  3
+                }
+              ]
+            },
+            "Key":  {
+              "tensors":  [
+                {
+                  "name":  "simple_count_result.11",
+                  "elemType":  "INT64",
+                  "option":  "REFERENCE",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_SECRET"
+                  },
+                  "refNum":  3
+                }
+              ]
+            }
+          },
+          "outputs":  {
+            "Out":  {
+              "tensors":  [
+                {
+                  "name":  "simple_count_result.23",
+                  "elemType":  "INT64",
+                  "option":  "REFERENCE",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_SECRET"
+                  },
+                  "refNum":  1
+                },
+                {
+                  "name":  "simple_count_result.24",
+                  "elemType":  "INT64",
+                  "option":  "REFERENCE",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_SECRET"
+                  },
+                  "refNum":  1
+                }
+              ]
+            }
+          },
+          "attributes":  {
+            "reverse":  {
+              "t":  {
+                "name":  ".0",
+                "shape":  {
+                  "dim":  [
+                    {
+                      "dimValue":  "1"
+                    }
+                  ]
+                },
+                "elemType":  "BOOL",
+                "boolData":  [
+                  false
+                ]
+              }
+            }
+          }
+        },
+        "13":  {
+          "nodeName":  "oblivious_group_mark.13",
+          "opType":  "ObliviousGroupMark",
+          "inputs":  {
+            "Key":  {
+              "tensors":  [
+                {
+                  "name":  "simple_count_result.23",
+                  "elemType":  "INT64",
+                  "option":  "REFERENCE",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_SECRET"
+                  },
+                  "refNum":  1
+                }
+              ]
+            }
+          },
+          "outputs":  {
+            "Group":  {
+              "tensors":  [
+                {
+                  "name":  "group_mark.25",
+                  "elemType":  "BOOL",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_SECRET"
+                  },
+                  "refNum":  3
+                }
+              ]
+            }
+          }
+        },
+        "14":  {
+          "nodeName":  "count.14",
+          "opType":  "ObliviousGroupCount",
+          "inputs":  {
+            "Group":  {
+              "tensors":  [
+                {
+                  "name":  "group_mark.25",
+                  "elemType":  "BOOL",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_SECRET"
+                  },
+                  "refNum":  3
+                }
+              ]
+            },
+            "In":  {
+              "tensors":  [
+                {
+                  "name":  "group_mark.25",
+                  "elemType":  "BOOL",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_SECRET"
+                  },
+                  "refNum":  3
+                }
+              ]
+            }
+          },
+          "outputs":  {
+            "Out":  {
+              "tensors":  [
+                {
+                  "name":  "aggregated_group_simple_count.26",
+                  "elemType":  "INT64",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_SECRET"
+                  },
+                  "refNum":  1
+                }
+              ]
+            }
+          }
+        },
+        "15":  {
+          "nodeName":  "shuffle.15",
+          "opType":  "Shuffle",
+          "inputs":  {
+            "In":  {
+              "tensors":  [
+                {
+                  "name":  "aggregated_group_simple_count.26",
+                  "elemType":  "INT64",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_SECRET"
+                  },
+                  "refNum":  1
+                },
+                {
+                  "name":  "simple_count_result.24",
+                  "elemType":  "INT64",
+                  "option":  "REFERENCE",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_SECRET"
+                  },
+                  "refNum":  1
+                },
+                {
+                  "name":  "group_mark.25",
+                  "elemType":  "BOOL",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_SECRET"
+                  },
+                  "refNum":  3
+                }
+              ]
+            }
+          },
+          "outputs":  {
+            "Out":  {
+              "tensors":  [
+                {
+                  "name":  "aggregated_group_simple_count.27",
+                  "elemType":  "INT64",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_SECRET"
+                  },
+                  "refNum":  1
+                },
+                {
+                  "name":  "simple_count_result.28",
+                  "elemType":  "INT64",
+                  "option":  "REFERENCE",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_SECRET"
+                  },
+                  "refNum":  1
+                },
+                {
+                  "name":  "group_mark.29",
+                  "elemType":  "BOOL",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_SECRET"
+                  },
+                  "refNum":  1
+                }
+              ]
+            }
+          }
+        },
+        "16":  {
+          "nodeName":  "make_public.16",
+          "opType":  "MakePublic",
+          "inputs":  {
+            "In":  {
+              "tensors":  [
+                {
+                  "name":  "group_mark.29",
+                  "elemType":  "BOOL",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_SECRET"
+                  },
+                  "refNum":  1
+                }
+              ]
+            }
+          },
+          "outputs":  {
+            "Out":  {
+              "tensors":  [
+                {
+                  "name":  "group_mark.30",
+                  "elemType":  "BOOL",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_PUBLIC"
+                  },
+                  "refNum":  1
+                }
+              ]
+            }
+          }
+        },
+        "17":  {
+          "nodeName":  "filter.17",
+          "opType":  "Filter",
+          "inputs":  {
+            "Filter":  {
+              "tensors":  [
+                {
+                  "name":  "group_mark.30",
+                  "elemType":  "BOOL",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_PUBLIC"
+                  },
+                  "refNum":  1
+                }
+              ]
+            },
+            "In":  {
+              "tensors":  [
+                {
+                  "name":  "aggregated_group_simple_count.27",
+                  "elemType":  "INT64",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_SECRET"
+                  },
+                  "refNum":  1
+                },
+                {
+                  "name":  "simple_count_result.28",
+                  "elemType":  "INT64",
+                  "option":  "REFERENCE",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_SECRET"
+                  },
+                  "refNum":  1
+                }
+              ]
+            }
+          },
+          "outputs":  {
+            "Out":  {
+              "tensors":  [
+                {
+                  "name":  "simple_count_result.12",
+                  "elemType":  "INT64",
+                  "option":  "REFERENCE",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_SECRET"
+                  },
+                  "refNum":  1
+                },
+                {
+                  "name":  "simple_count_result_firstrow.13",
+                  "elemType":  "INT64",
+                  "option":  "REFERENCE",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_SECRET"
+                  },
+                  "refNum":  1
+                }
+              ]
+            }
+          }
+        },
+        "18":  {
+          "nodeName":  "make_private.18",
+          "opType":  "MakePrivate",
+          "inputs":  {
+            "In":  {
+              "tensors":  [
+                {
+                  "name":  "simple_count_result_firstrow.13",
+                  "elemType":  "INT64",
+                  "option":  "REFERENCE",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_SECRET"
+                  },
+                  "refNum":  1
+                }
+              ]
+            }
+          },
+          "outputs":  {
+            "Out":  {
+              "tensors":  [
+                {
+                  "name":  "simple_count_result_firstrow.31",
+                  "elemType":  "INT64",
+                  "option":  "REFERENCE",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_PRIVATE"
+                  },
+                  "refNum":  1
+                }
+              ]
+            }
+          },
+          "attributes":  {
+            "reveal_to":  {
+              "t":  {
+                "name":  ".0",
+                "elemType":  "STRING",
+                "stringData":  [
+                  "alice"
+                ]
+              }
+            }
+          }
+        },
+        "19":  {
+          "nodeName":  "make_private.19",
+          "opType":  "MakePrivate",
+          "inputs":  {
+            "In":  {
+              "tensors":  [
+                {
+                  "name":  "simple_count_result.12",
+                  "elemType":  "INT64",
+                  "option":  "REFERENCE",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_SECRET"
+                  },
+                  "refNum":  1
+                }
+              ]
+            }
+          },
+          "outputs":  {
+            "Out":  {
+              "tensors":  [
+                {
+                  "name":  "simple_count_result.32",
+                  "elemType":  "INT64",
+                  "option":  "REFERENCE",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_PRIVATE"
+                  },
+                  "refNum":  1
+                }
+              ]
+            }
+          },
+          "attributes":  {
+            "reveal_to":  {
+              "t":  {
+                "name":  ".0",
+                "elemType":  "STRING",
+                "stringData":  [
+                  "alice"
+                ]
+              }
+            }
+          }
+        },
+        "2":  {
+          "nodeName":  "make_share.2",
+          "opType":  "MakeShare",
+          "inputs":  {
+            "In":  {
+              "tensors":  [
+                {
+                  "name":  "customer.custkey.1",
+                  "elemType":  "INT64",
+                  "option":  "REFERENCE",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_PRIVATE"
+                  },
+                  "refNum":  1
+                }
+              ]
+            }
+          },
+          "outputs":  {
+            "Out":  {
+              "tensors":  [
+                {
+                  "name":  "customer.custkey.14",
+                  "elemType":  "INT64",
+                  "option":  "REFERENCE",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_SECRET"
+                  },
+                  "refNum":  2
+                }
+              ]
+            }
+          }
+        },
+        "3":  {
+          "nodeName":  "make_share.3",
+          "opType":  "MakeShare",
+          "inputs":  {
+            "In":  {
+              "tensors":  [
+                {
+                  "name":  "orders.custkey.7",
+                  "elemType":  "INT64",
+                  "option":  "REFERENCE",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_PRIVATE"
+                  },
+                  "refNum":  1
+                }
+              ]
+            }
+          },
+          "outputs":  {
+            "Out":  {
+              "tensors":  [
+                {
+                  "name":  "orders.custkey.15",
+                  "elemType":  "INT64",
+                  "option":  "REFERENCE",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_SECRET"
+                  },
+                  "refNum":  1
+                }
+              ]
+            }
+          }
+        },
+        "4":  {
+          "nodeName":  "make_share.4",
+          "opType":  "MakeShare",
+          "inputs":  {
+            "In":  {
+              "tensors":  [
+                {
+                  "name":  "orders.orderkey.8",
+                  "elemType":  "INT64",
+                  "option":  "REFERENCE",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_PRIVATE"
+                  },
+                  "refNum":  1
+                }
+              ]
+            }
+          },
+          "outputs":  {
+            "Out":  {
+              "tensors":  [
+                {
+                  "name":  "orders.orderkey.16",
+                  "elemType":  "INT64",
+                  "option":  "REFERENCE",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_SECRET"
+                  },
+                  "refNum":  1
+                }
+              ]
+            }
+          }
+        },
+        "5":  {
+          "nodeName":  "secret_eq_join.5",
+          "opType":  "SecretJoin",
+          "inputs":  {
+            "Left":  {
+              "tensors":  [
+                {
+                  "name":  "customer.custkey.14",
+                  "elemType":  "INT64",
+                  "option":  "REFERENCE",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_SECRET"
+                  },
+                  "refNum":  2
+                }
+              ]
+            },
+            "LeftKey":  {
+              "tensors":  [
+                {
+                  "name":  "customer.custkey.14",
+                  "elemType":  "INT64",
+                  "option":  "REFERENCE",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_SECRET"
+                  },
+                  "refNum":  2
+                }
+              ]
+            },
+            "Right":  {
+              "tensors":  [
+                {
+                  "name":  "orders.orderkey.16",
+                  "elemType":  "INT64",
+                  "option":  "REFERENCE",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_SECRET"
+                  },
+                  "refNum":  1
+                }
+              ]
+            },
+            "RightKey":  {
+              "tensors":  [
+                {
+                  "name":  "orders.custkey.15",
+                  "elemType":  "INT64",
+                  "option":  "REFERENCE",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_SECRET"
+                  },
+                  "refNum":  1
+                }
+              ]
+            }
+          },
+          "outputs":  {
+            "LeftOutput":  {
+              "tensors":  [
+                {
+                  "name":  "customer.custkey.9",
+                  "elemType":  "INT64",
+                  "option":  "REFERENCE",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_SECRET"
+                  },
+                  "refNum":  2
+                }
+              ]
+            },
+            "RightOutput":  {
+              "tensors":  [
+                {
+                  "name":  "orders.orderkey.10",
+                  "elemType":  "INT64",
+                  "option":  "REFERENCE",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_SECRET"
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "6":  {
+          "nodeName":  "sort.6",
+          "opType":  "Sort",
+          "inputs":  {
+            "In":  {
+              "tensors":  [
+                {
+                  "name":  "customer.custkey.9",
+                  "elemType":  "INT64",
+                  "option":  "REFERENCE",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_SECRET"
+                  },
+                  "refNum":  2
+                }
+              ]
+            },
+            "Key":  {
+              "tensors":  [
+                {
+                  "name":  "customer.custkey.9",
+                  "elemType":  "INT64",
+                  "option":  "REFERENCE",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_SECRET"
+                  },
+                  "refNum":  2
+                }
+              ]
+            }
+          },
+          "outputs":  {
+            "Out":  {
+              "tensors":  [
+                {
+                  "name":  "customer.custkey.17",
+                  "elemType":  "INT64",
+                  "option":  "REFERENCE",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_SECRET"
+                  },
+                  "refNum":  1
+                }
+              ]
+            }
+          },
+          "attributes":  {
+            "reverse":  {
+              "t":  {
+                "name":  ".0",
+                "shape":  {
+                  "dim":  [
+                    {
+                      "dimValue":  "1"
+                    }
+                  ]
+                },
+                "elemType":  "BOOL",
+                "boolData":  [
+                  false
+                ]
+              }
+            }
+          }
+        },
+        "7":  {
+          "nodeName":  "oblivious_group_mark.7",
+          "opType":  "ObliviousGroupMark",
+          "inputs":  {
+            "Key":  {
+              "tensors":  [
+                {
+                  "name":  "customer.custkey.17",
+                  "elemType":  "INT64",
+                  "option":  "REFERENCE",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_SECRET"
+                  },
+                  "refNum":  1
+                }
+              ]
+            }
+          },
+          "outputs":  {
+            "Group":  {
+              "tensors":  [
+                {
+                  "name":  "group_mark.18",
+                  "elemType":  "BOOL",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_SECRET"
+                  },
+                  "refNum":  3
+                }
+              ]
+            }
+          }
+        },
+        "8":  {
+          "nodeName":  "count.8",
+          "opType":  "ObliviousGroupCount",
+          "inputs":  {
+            "Group":  {
+              "tensors":  [
+                {
+                  "name":  "group_mark.18",
+                  "elemType":  "BOOL",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_SECRET"
+                  },
+                  "refNum":  3
+                }
+              ]
+            },
+            "In":  {
+              "tensors":  [
+                {
+                  "name":  "group_mark.18",
+                  "elemType":  "BOOL",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_SECRET"
+                  },
+                  "refNum":  3
+                }
+              ]
+            }
+          },
+          "outputs":  {
+            "Out":  {
+              "tensors":  [
+                {
+                  "name":  "aggregated_group_simple_count.19",
+                  "elemType":  "INT64",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_SECRET"
+                  },
+                  "refNum":  1
+                }
+              ]
+            }
+          }
+        },
+        "9":  {
+          "nodeName":  "shuffle.9",
+          "opType":  "Shuffle",
+          "inputs":  {
+            "In":  {
+              "tensors":  [
+                {
+                  "name":  "aggregated_group_simple_count.19",
+                  "elemType":  "INT64",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_SECRET"
+                  },
+                  "refNum":  1
+                },
+                {
+                  "name":  "group_mark.18",
+                  "elemType":  "BOOL",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_SECRET"
+                  },
+                  "refNum":  3
+                }
+              ]
+            }
+          },
+          "outputs":  {
+            "Out":  {
+              "tensors":  [
+                {
+                  "name":  "aggregated_group_simple_count.20",
+                  "elemType":  "INT64",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_SECRET"
+                  },
+                  "refNum":  1
+                },
+                {
+                  "name":  "group_mark.21",
+                  "elemType":  "BOOL",
+                  "annotation":  {
+                    "status":  "TENSORSTATUS_SECRET"
+                  },
+                  "refNum":  1
+                }
+              ]
+            }
+          }
+        }
+      },
+      "policy":  {
+        "workerNum":  1,
+        "pipelines":  [
+          {
+            "subdags":  [
+              {},
+              {
+                "jobs":  [
+                  {
+                    "nodeIds":  [
+                      "1"
+                    ]
+                  }
+                ]
+              },
+              {
+                "jobs":  [
+                  {
+                    "nodeIds":  [
+                      "2"
+                    ]
+                  }
+                ],
+                "needCallBarrierAfterJobs":  true
+              },
+              {
+                "jobs":  [
+                  {
+                    "nodeIds":  [
+                      "3"
+                    ]
+                  }
+                ],
+                "needCallBarrierAfterJobs":  true
+              },
+              {
+                "jobs":  [
+                  {
+                    "nodeIds":  [
+                      "4"
+                    ]
+                  }
+                ],
+                "needCallBarrierAfterJobs":  true
+              },
+              {
+                "jobs":  [
+                  {
+                    "nodeIds":  [
+                      "5"
+                    ]
+                  }
+                ],
+                "needCallBarrierAfterJobs":  true
+              },
+              {
+                "jobs":  [
+                  {
+                    "nodeIds":  [
+                      "6"
+                    ]
+                  }
+                ],
+                "needCallBarrierAfterJobs":  true
+              },
+              {
+                "jobs":  [
+                  {
+                    "nodeIds":  [
+                      "7"
+                    ]
+                  }
+                ],
+                "needCallBarrierAfterJobs":  true
+              },
+              {
+                "jobs":  [
+                  {
+                    "nodeIds":  [
+                      "8"
+                    ]
+                  }
+                ],
+                "needCallBarrierAfterJobs":  true
+              },
+              {
+                "jobs":  [
+                  {
+                    "nodeIds":  [
+                      "9"
+                    ]
+                  }
+                ],
+                "needCallBarrierAfterJobs":  true
+              },
+              {
+                "jobs":  [
+                  {
+                    "nodeIds":  [
+                      "10"
+                    ]
+                  }
+                ],
+                "needCallBarrierAfterJobs":  true
+              },
+              {
+                "jobs":  [
+                  {
+                    "nodeIds":  [
+                      "11"
+                    ]
+                  }
+                ],
+                "needCallBarrierAfterJobs":  true
+              },
+              {
+                "jobs":  [
+                  {
+                    "nodeIds":  [
+                      "12"
+                    ]
+                  }
+                ],
+                "needCallBarrierAfterJobs":  true
+              },
+              {
+                "jobs":  [
+                  {
+                    "nodeIds":  [
+                      "13"
+                    ]
+                  }
+                ],
+                "needCallBarrierAfterJobs":  true
+              },
+              {
+                "jobs":  [
+                  {
+                    "nodeIds":  [
+                      "14"
+                    ]
+                  }
+                ],
+                "needCallBarrierAfterJobs":  true
+              },
+              {
+                "jobs":  [
+                  {
+                    "nodeIds":  [
+                      "15"
+                    ]
+                  }
+                ],
+                "needCallBarrierAfterJobs":  true
+              },
+              {
+                "jobs":  [
+                  {
+                    "nodeIds":  [
+                      "16"
+                    ]
+                  }
+                ],
+                "needCallBarrierAfterJobs":  true
+              },
+              {
+                "jobs":  [
+                  {
+                    "nodeIds":  [
+                      "17"
+                    ]
+                  }
+                ],
+                "needCallBarrierAfterJobs":  true
+              },
+              {
+                "jobs":  [
+                  {
+                    "nodeIds":  [
+                      "18"
+                    ]
+                  }
+                ],
+                "needCallBarrierAfterJobs":  true
+              },
+              {
+                "jobs":  [
+                  {
+                    "nodeIds":  [
+                      "19"
+                    ]
+                  }
+                ],
+                "needCallBarrierAfterJobs":  true
+              },
+              {}
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "wholeGraphChecksum":  "73e70709f6c24821b14354e381d7722c32a0cb6976bd586419761aca0ea6e2c6",
+  "explain":  {
+    "exeGraphDot":  "digraph G {\n0 [label=\"run_sql:{in:[],out:[Out:{t_1,},],attr:[sql:select c.custkey from alice.customer as c;,table_refs:[alice.customer],],party:[alice,]}\"]\n1 [label=\"run_sql:{in:[],out:[Out:{t_7,t_8,},],attr:[sql:select o.custkey,o.orderkey from bob.orders as o where o.comment=3;,table_refs:[bob.orders],],party:[bob,]}\"]\n2 [label=\"make_share:{in:[In:{t_1,},],out:[Out:{t_14,},],attr:[],party:[alice,bob,]}\"]\n3 [label=\"make_share:{in:[In:{t_7,},],out:[Out:{t_15,},],attr:[],party:[alice,bob,]}\"]\n4 [label=\"make_share:{in:[In:{t_8,},],out:[Out:{t_16,},],attr:[],party:[alice,bob,]}\"]\n5 [label=\"secret_eq_join:{in:[Left:{t_14,},LeftKey:{t_14,},Right:{t_16,},RightKey:{t_15,},],out:[LeftOutput:{t_9,},RightOutput:{t_10,},],attr:[],party:[alice,bob,]}\"]\n6 [label=\"sort:{in:[In:{t_9,},Key:{t_9,},],out:[Out:{t_17,},],attr:[reverse:[false],],party:[alice,bob,]}\"]\n7 [label=\"oblivious_group_mark:{in:[Key:{t_17,},],out:[Group:{t_18,},],attr:[],party:[alice,bob,]}\"]\n8 [label=\"count:{in:[Group:{t_18,},In:{t_18,},],out:[Out:{t_19,},],attr:[],party:[alice,bob,]}\"]\n9 [label=\"shuffle:{in:[In:{t_19,t_18,},],out:[Out:{t_20,t_21,},],attr:[],party:[alice,bob,]}\"]\n10 [label=\"make_public:{in:[In:{t_21,},],out:[Out:{t_22,},],attr:[],party:[alice,bob,]}\"]\n11 [label=\"filter:{in:[Filter:{t_22,},In:{t_20,},],out:[Out:{t_11,},],attr:[],party:[alice,bob,]}\"]\n12 [label=\"sort:{in:[In:{t_11,t_11,},Key:{t_11,},],out:[Out:{t_23,t_24,},],attr:[reverse:[false],],party:[alice,bob,]}\"]\n13 [label=\"oblivious_group_mark:{in:[Key:{t_23,},],out:[Group:{t_25,},],attr:[],party:[alice,bob,]}\"]\n14 [label=\"count:{in:[Group:{t_25,},In:{t_25,},],out:[Out:{t_26,},],attr:[],party:[alice,bob,]}\"]\n15 [label=\"shuffle:{in:[In:{t_26,t_24,t_25,},],out:[Out:{t_27,t_28,t_29,},],attr:[],party:[alice,bob,]}\"]\n16 [label=\"make_public:{in:[In:{t_29,},],out:[Out:{t_30,},],attr:[],party:[alice,bob,]}\"]\n17 [label=\"filter:{in:[Filter:{t_30,},In:{t_27,t_28,},],out:[Out:{t_12,t_13,},],attr:[],party:[alice,bob,]}\"]\n18 [label=\"make_private:{in:[In:{t_13,},],out:[Out:{t_31,},],attr:[reveal_to:alice,],party:[alice,bob,]}\"]\n19 [label=\"make_private:{in:[In:{t_12,},],out:[Out:{t_32,},],attr:[reveal_to:alice,],party:[alice,bob,]}\"]\n20 [label=\"publish_result:{in:[In:{t_31,t_32,},],out:[Out:{t_33,t_34,},],attr:[],party:[alice,]}\"]\n0 -> 2 [label = \"t_1:{custkey:PRIVATE:INT64}\"]\n1 -> 3 [label = \"t_7:{custkey:PRIVATE:INT64}\"]\n1 -> 4 [label = \"t_8:{orderkey:PRIVATE:INT64}\"]\n10 -> 11 [label = \"t_22:{group_mark:PUBLIC:BOOL}\"]\n11 -> 12 [label = \"t_11:{simple_count_result:SECRET:INT64}\"]\n11 -> 12 [label = \"t_11:{simple_count_result:SECRET:INT64}\"]\n11 -> 12 [label = \"t_11:{simple_count_result:SECRET:INT64}\"]\n12 -> 13 [label = \"t_23:{simple_count_result:SECRET:INT64}\"]\n12 -> 15 [label = \"t_24:{simple_count_result:SECRET:INT64}\"]\n13 -> 14 [label = \"t_25:{group_mark:SECRET:BOOL}\"]\n13 -> 14 [label = \"t_25:{group_mark:SECRET:BOOL}\"]\n13 -> 15 [label = \"t_25:{group_mark:SECRET:BOOL}\"]\n14 -> 15 [label = \"t_26:{aggregated_group_simple_count:SECRET:INT64}\"]\n15 -> 16 [label = \"t_29:{group_mark:SECRET:BOOL}\"]\n15 -> 17 [label = \"t_27:{aggregated_group_simple_count:SECRET:INT64}\"]\n15 -> 17 [label = \"t_28:{simple_count_result:SECRET:INT64}\"]\n16 -> 17 [label = \"t_30:{group_mark:PUBLIC:BOOL}\"]\n17 -> 18 [label = \"t_13:{simple_count_result_firstrow:SECRET:INT64}\"]\n17 -> 19 [label = \"t_12:{simple_count_result:SECRET:INT64}\"]\n18 -> 20 [label = \"t_31:{simple_count_result_firstrow:PRIVATE:INT64}\"]\n19 -> 20 [label = \"t_32:{simple_count_result:PRIVATE:INT64}\"]\n2 -> 5 [label = \"t_14:{custkey:SECRET:INT64}\"]\n2 -> 5 [label = \"t_14:{custkey:SECRET:INT64}\"]\n3 -> 5 [label = \"t_15:{custkey:SECRET:INT64}\"]\n4 -> 5 [label = \"t_16:{orderkey:SECRET:INT64}\"]\n5 -> 6 [label = \"t_9:{custkey:SECRET:INT64}\"]\n5 -> 6 [label = \"t_9:{custkey:SECRET:INT64}\"]\n6 -> 7 [label = \"t_17:{custkey:SECRET:INT64}\"]\n7 -> 8 [label = \"t_18:{group_mark:SECRET:BOOL}\"]\n7 -> 8 [label = \"t_18:{group_mark:SECRET:BOOL}\"]\n7 -> 9 [label = \"t_18:{group_mark:SECRET:BOOL}\"]\n8 -> 9 [label = \"t_19:{aggregated_group_simple_count:SECRET:INT64}\"]\n9 -> 10 [label = \"t_21:{group_mark:SECRET:BOOL}\"]\n9 -> 11 [label = \"t_20:{aggregated_group_simple_count:SECRET:INT64}\"]\n}"
+  }
+}

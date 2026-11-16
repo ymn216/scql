@@ -1,0 +1,5 @@
+time="2026-05-19T12:29:00+08:00" level=info msg="Step 1: Compiling SQL to execution plan..."
+time="2026-05-19T12:29:00+08:00" level=info msg="Compilation successful. SubGraphs: 2"
+time="2026-05-19T12:29:01+08:00" level=info msg="CompiledPlan JSON written to compiled_plan.json"
+time="2026-05-19T12:29:01+08:00" level=info msg="compile-only: skip engine execution"
+time="2026-05-19T12:29:01+08:00" level=info msg="Execution completed successfully"

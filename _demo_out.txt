@@ -1,0 +1,323 @@
+
+========== CompiledPlan summary ==========
+parties: [alice bob]
+whole_graph_checksum: 73e70709f6c24821b14354e381d7722c32a0cb6976bd586419761aca0ea6e2c6
+spu_runtime_conf: protocol=SEMI2K field=FM64 colocated_opt=true
+result_schema:
+  - c_count ()
+  - custdist ()
+
+--- SubGraph party="alice" checksum= ---
+nodes (20):
+  [0] op_type="RunSQL" node_name="run_sql.0"
+        outputs:
+      Out: [customer.custkey.1]
+    attributes: sql, table_refs
+  [10] op_type="MakePublic" node_name="make_public.10"
+        inputs:
+      In: [group_mark.21]
+        outputs:
+      Out: [group_mark.22]
+  [11] op_type="Filter" node_name="filter.11"
+        inputs:
+      Filter: [group_mark.22]
+      In: [aggregated_group_simple_count.20]
+        outputs:
+      Out: [simple_count_result.11]
+  [12] op_type="Sort" node_name="sort.12"
+        inputs:
+      In: [simple_count_result.11, simple_count_result.11]
+      Key: [simple_count_result.11]
+        outputs:
+      Out: [simple_count_result.23, simple_count_result.24]
+    attributes: reverse
+  [13] op_type="ObliviousGroupMark" node_name="oblivious_group_mark.13"
+        inputs:
+      Key: [simple_count_result.23]
+        outputs:
+      Group: [group_mark.25]
+  [14] op_type="ObliviousGroupCount" node_name="count.14"
+        inputs:
+      Group: [group_mark.25]
+      In: [group_mark.25]
+        outputs:
+      Out: [aggregated_group_simple_count.26]
+  [15] op_type="Shuffle" node_name="shuffle.15"
+        inputs:
+      In: [aggregated_group_simple_count.26, simple_count_result.24, group_mark.25]
+        outputs:
+      Out: [aggregated_group_simple_count.27, simple_count_result.28, group_mark.29]
+  [16] op_type="MakePublic" node_name="make_public.16"
+        inputs:
+      In: [group_mark.29]
+        outputs:
+      Out: [group_mark.30]
+  [17] op_type="Filter" node_name="filter.17"
+        inputs:
+      Filter: [group_mark.30]
+      In: [aggregated_group_simple_count.27, simple_count_result.28]
+        outputs:
+      Out: [simple_count_result.12, simple_count_result_firstrow.13]
+  [18] op_type="MakePrivate" node_name="make_private.18"
+        inputs:
+      In: [simple_count_result_firstrow.13]
+        outputs:
+      Out: [simple_count_result_firstrow.31]
+    attributes: reveal_to
+  [19] op_type="MakePrivate" node_name="make_private.19"
+        inputs:
+      In: [simple_count_result.12]
+        outputs:
+      Out: [simple_count_result.32]
+    attributes: reveal_to
+  [2] op_type="MakeShare" node_name="make_share.2"
+        inputs:
+      In: [customer.custkey.1]
+        outputs:
+      Out: [customer.custkey.14]
+  [20] op_type="Publish" node_name="publish_result.20"
+        inputs:
+      In: [simple_count_result_firstrow.31, simple_count_result.32]
+        outputs:
+      Out: [c_count.33, custdist.34]
+  [3] op_type="MakeShare" node_name="make_share.3"
+        inputs:
+      In: [orders.custkey.7]
+        outputs:
+      Out: [orders.custkey.15]
+  [4] op_type="MakeShare" node_name="make_share.4"
+        inputs:
+      In: [orders.orderkey.8]
+        outputs:
+      Out: [orders.orderkey.16]
+  [5] op_type="SecretJoin" node_name="secret_eq_join.5"
+        inputs:
+      Left: [customer.custkey.14]
+      LeftKey: [customer.custkey.14]
+      Right: [orders.orderkey.16]
+      RightKey: [orders.custkey.15]
+        outputs:
+      LeftOutput: [customer.custkey.9]
+      RightOutput: [orders.orderkey.10]
+  [6] op_type="Sort" node_name="sort.6"
+        inputs:
+      In: [customer.custkey.9]
+      Key: [customer.custkey.9]
+        outputs:
+      Out: [customer.custkey.17]
+    attributes: reverse
+  [7] op_type="ObliviousGroupMark" node_name="oblivious_group_mark.7"
+        inputs:
+      Key: [customer.custkey.17]
+        outputs:
+      Group: [group_mark.18]
+  [8] op_type="ObliviousGroupCount" node_name="count.8"
+        inputs:
+      Group: [group_mark.18]
+      In: [group_mark.18]
+        outputs:
+      Out: [aggregated_group_simple_count.19]
+  [9] op_type="Shuffle" node_name="shuffle.9"
+        inputs:
+      In: [aggregated_group_simple_count.19, group_mark.18]
+        outputs:
+      Out: [aggregated_group_simple_count.20, group_mark.21]
+policy: worker_num=1 pipelines=1
+  pipeline[0]: batched=false subdags=21 inputs=0 outputs=0
+    subdag[0]: jobs=1
+      job[0]: worker_id=0 node_ids=[0]
+    subdag[1]: jobs=0
+    subdag[2]: jobs=1 barrier_after_jobs=true
+      job[0]: worker_id=0 node_ids=[2]
+    subdag[3]: jobs=1 barrier_after_jobs=true
+      job[0]: worker_id=0 node_ids=[3]
+    subdag[4]: jobs=1 barrier_after_jobs=true
+      job[0]: worker_id=0 node_ids=[4]
+    subdag[5]: jobs=1 barrier_after_jobs=true
+      job[0]: worker_id=0 node_ids=[5]
+    subdag[6]: jobs=1 barrier_after_jobs=true
+      job[0]: worker_id=0 node_ids=[6]
+    subdag[7]: jobs=1 barrier_after_jobs=true
+      job[0]: worker_id=0 node_ids=[7]
+    subdag[8]: jobs=1 barrier_after_jobs=true
+      job[0]: worker_id=0 node_ids=[8]
+    subdag[9]: jobs=1 barrier_after_jobs=true
+      job[0]: worker_id=0 node_ids=[9]
+    subdag[10]: jobs=1 barrier_after_jobs=true
+      job[0]: worker_id=0 node_ids=[10]
+    subdag[11]: jobs=1 barrier_after_jobs=true
+      job[0]: worker_id=0 node_ids=[11]
+    subdag[12]: jobs=1 barrier_after_jobs=true
+      job[0]: worker_id=0 node_ids=[12]
+    subdag[13]: jobs=1 barrier_after_jobs=true
+      job[0]: worker_id=0 node_ids=[13]
+    subdag[14]: jobs=1 barrier_after_jobs=true
+      job[0]: worker_id=0 node_ids=[14]
+    subdag[15]: jobs=1 barrier_after_jobs=true
+      job[0]: worker_id=0 node_ids=[15]
+    subdag[16]: jobs=1 barrier_after_jobs=true
+      job[0]: worker_id=0 node_ids=[16]
+    subdag[17]: jobs=1 barrier_after_jobs=true
+      job[0]: worker_id=0 node_ids=[17]
+    subdag[18]: jobs=1 barrier_after_jobs=true
+      job[0]: worker_id=0 node_ids=[18]
+    subdag[19]: jobs=1 barrier_after_jobs=true
+      job[0]: worker_id=0 node_ids=[19]
+    subdag[20]: jobs=1
+      job[0]: worker_id=0 node_ids=[20]
+
+--- SubGraph party="bob" checksum= ---
+nodes (19):
+  [1] op_type="RunSQL" node_name="run_sql.1"
+        outputs:
+      Out: [orders.custkey.7, orders.orderkey.8]
+    attributes: sql, table_refs
+  [10] op_type="MakePublic" node_name="make_public.10"
+        inputs:
+      In: [group_mark.21]
+        outputs:
+      Out: [group_mark.22]
+  [11] op_type="Filter" node_name="filter.11"
+        inputs:
+      Filter: [group_mark.22]
+      In: [aggregated_group_simple_count.20]
+        outputs:
+      Out: [simple_count_result.11]
+  [12] op_type="Sort" node_name="sort.12"
+        inputs:
+      In: [simple_count_result.11, simple_count_result.11]
+      Key: [simple_count_result.11]
+        outputs:
+      Out: [simple_count_result.23, simple_count_result.24]
+    attributes: reverse
+  [13] op_type="ObliviousGroupMark" node_name="oblivious_group_mark.13"
+        inputs:
+      Key: [simple_count_result.23]
+        outputs:
+      Group: [group_mark.25]
+  [14] op_type="ObliviousGroupCount" node_name="count.14"
+        inputs:
+      Group: [group_mark.25]
+      In: [group_mark.25]
+        outputs:
+      Out: [aggregated_group_simple_count.26]
+  [15] op_type="Shuffle" node_name="shuffle.15"
+        inputs:
+      In: [aggregated_group_simple_count.26, simple_count_result.24, group_mark.25]
+        outputs:
+      Out: [aggregated_group_simple_count.27, simple_count_result.28, group_mark.29]
+  [16] op_type="MakePublic" node_name="make_public.16"
+        inputs:
+      In: [group_mark.29]
+        outputs:
+      Out: [group_mark.30]
+  [17] op_type="Filter" node_name="filter.17"
+        inputs:
+      Filter: [group_mark.30]
+      In: [aggregated_group_simple_count.27, simple_count_result.28]
+        outputs:
+      Out: [simple_count_result.12, simple_count_result_firstrow.13]
+  [18] op_type="MakePrivate" node_name="make_private.18"
+        inputs:
+      In: [simple_count_result_firstrow.13]
+        outputs:
+      Out: [simple_count_result_firstrow.31]
+    attributes: reveal_to
+  [19] op_type="MakePrivate" node_name="make_private.19"
+        inputs:
+      In: [simple_count_result.12]
+        outputs:
+      Out: [simple_count_result.32]
+    attributes: reveal_to
+  [2] op_type="MakeShare" node_name="make_share.2"
+        inputs:
+      In: [customer.custkey.1]
+        outputs:
+      Out: [customer.custkey.14]
+  [3] op_type="MakeShare" node_name="make_share.3"
+        inputs:
+      In: [orders.custkey.7]
+        outputs:
+      Out: [orders.custkey.15]
+  [4] op_type="MakeShare" node_name="make_share.4"
+        inputs:
+      In: [orders.orderkey.8]
+        outputs:
+      Out: [orders.orderkey.16]
+  [5] op_type="SecretJoin" node_name="secret_eq_join.5"
+        inputs:
+      Left: [customer.custkey.14]
+      LeftKey: [customer.custkey.14]
+      Right: [orders.orderkey.16]
+      RightKey: [orders.custkey.15]
+        outputs:
+      LeftOutput: [customer.custkey.9]
+      RightOutput: [orders.orderkey.10]
+  [6] op_type="Sort" node_name="sort.6"
+        inputs:
+      In: [customer.custkey.9]
+      Key: [customer.custkey.9]
+        outputs:
+      Out: [customer.custkey.17]
+    attributes: reverse
+  [7] op_type="ObliviousGroupMark" node_name="oblivious_group_mark.7"
+        inputs:
+      Key: [customer.custkey.17]
+        outputs:
+      Group: [group_mark.18]
+  [8] op_type="ObliviousGroupCount" node_name="count.8"
+        inputs:
+      Group: [group_mark.18]
+      In: [group_mark.18]
+        outputs:
+      Out: [aggregated_group_simple_count.19]
+  [9] op_type="Shuffle" node_name="shuffle.9"
+        inputs:
+      In: [aggregated_group_simple_count.19, group_mark.18]
+        outputs:
+      Out: [aggregated_group_simple_count.20, group_mark.21]
+policy: worker_num=1 pipelines=1
+  pipeline[0]: batched=false subdags=21 inputs=0 outputs=0
+    subdag[0]: jobs=0
+    subdag[1]: jobs=1
+      job[0]: worker_id=0 node_ids=[1]
+    subdag[2]: jobs=1 barrier_after_jobs=true
+      job[0]: worker_id=0 node_ids=[2]
+    subdag[3]: jobs=1 barrier_after_jobs=true
+      job[0]: worker_id=0 node_ids=[3]
+    subdag[4]: jobs=1 barrier_after_jobs=true
+      job[0]: worker_id=0 node_ids=[4]
+    subdag[5]: jobs=1 barrier_after_jobs=true
+      job[0]: worker_id=0 node_ids=[5]
+    subdag[6]: jobs=1 barrier_after_jobs=true
+      job[0]: worker_id=0 node_ids=[6]
+    subdag[7]: jobs=1 barrier_after_jobs=true
+      job[0]: worker_id=0 node_ids=[7]
+    subdag[8]: jobs=1 barrier_after_jobs=true
+      job[0]: worker_id=0 node_ids=[8]
+    subdag[9]: jobs=1 barrier_after_jobs=true
+      job[0]: worker_id=0 node_ids=[9]
+    subdag[10]: jobs=1 barrier_after_jobs=true
+      job[0]: worker_id=0 node_ids=[10]
+    subdag[11]: jobs=1 barrier_after_jobs=true
+      job[0]: worker_id=0 node_ids=[11]
+    subdag[12]: jobs=1 barrier_after_jobs=true
+      job[0]: worker_id=0 node_ids=[12]
+    subdag[13]: jobs=1 barrier_after_jobs=true
+      job[0]: worker_id=0 node_ids=[13]
+    subdag[14]: jobs=1 barrier_after_jobs=true
+      job[0]: worker_id=0 node_ids=[14]
+    subdag[15]: jobs=1 barrier_after_jobs=true
+      job[0]: worker_id=0 node_ids=[15]
+    subdag[16]: jobs=1 barrier_after_jobs=true
+      job[0]: worker_id=0 node_ids=[16]
+    subdag[17]: jobs=1 barrier_after_jobs=true
+      job[0]: worker_id=0 node_ids=[17]
+    subdag[18]: jobs=1 barrier_after_jobs=true
+      job[0]: worker_id=0 node_ids=[18]
+    subdag[19]: jobs=1 barrier_after_jobs=true
+      job[0]: worker_id=0 node_ids=[19]
+    subdag[20]: jobs=0
+==========================================
+
+[timing] compiler_wall=0.004s (compile-only)

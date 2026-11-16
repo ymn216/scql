@@ -1,0 +1,70 @@
+{
+    "sql": " SELECT o.orderpriority, COUNT(*) AS order_count FROM orders as o WHERE o.orderdate >= 20120801 AND o.orderdate < 20121101 AND EXISTS (SELECT 1 FROM lineitem as l WHERE l.orderkey = o.orderkey AND l.commitdate < l.receiptdate) GROUP BY o.orderpriority;",
+    "catalog": {
+        "tables": [
+            {
+                "table_name": "orders",
+                "columns": [
+                    { "name": "orderkey",          "type": "int", "ordinal_position": 1 },
+                    { "name": "orderpriority", "type": "int",    "ordinal_position": 2 },
+                    { "name": "orderdate", "type": "int",    "ordinal_position": 3 }
+                ],
+                "ref_table": "alice.orders",
+                "db_type": "mysql",
+                "owner": { "code": "alice" }
+            },
+            {
+                "table_name": "lineitem",
+                "columns": [
+                    { "name": "orderkey",           "type": "int", "ordinal_position": 1 },
+                    { "name": "commitdate", "type": "int",  "ordinal_position": 2 },
+                    { "name": "receiptdate", "type": "int",  "ordinal_position": 3 }
+                ],
+                "ref_table": "bob.lineitem",
+                "db_type": "mysql",
+                "owner": { "code": "bob" }
+            }
+        ]
+    },
+    "security_conf": {
+        "global_relaxation": {
+            "reveal_group_count": false,
+            "reveal_group_mark": false,
+            "reveal_key_after_join": false,
+            "reveal_filter_mask": true
+        },
+        "column_visibility_list": [
+            { "table": "orders", "column": "orderkey",           "visible_parties": [ { "code": "alice" } ] },
+            { "table": "orders", "column": "orderpriority",  "visible_parties": [ { "code": "alice" } ] },
+            { "table": "orders", "column": "orderdate",       "visible_parties": [ { "code": "alice" } ] },
+            { "table": "lineitem", "column": "orderkey",          "visible_parties": [ { "code": "bob" } ] },
+            { "table": "lineitem", "column": "commitdate", "visible_parties": [ { "code": "bob" } ] },
+            { "table": "lineitem", "column": "receiptdate", "visible_parties": [ { "code": "bob" } ] }
+        ],
+        "reverse_inference_conf": {
+            "enable_reverse_inference": true
+        },
+        "result_security_conf": {
+            "groupby_threshold": 1
+        }
+    },
+    "engine_endpoints": {
+        "alice": "__ALICE_IP__:8003",
+        "bob":   "__BOB_IP__:8003"
+    },
+    "engine_link_endpoints": {
+        "alice": "__ALICE_IP__:8004",
+        "bob":   "__BOB_IP__:8004"
+    },
+    "engine_client_type": "GRPC",
+    "engine_timeout": 300,
+    "issuer": "alice",
+    "compile_opts": {
+        "spu_conf": {
+            "protocol": "SEMI2K",
+            "field": "FM64",
+            "experimental_enable_colocated_optimization": true
+        },
+        "batched": false
+    }
+}
